@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Gateway Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('/static/chatbot1.webp') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .chat-container {
+            background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent to show background image */
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            padding: 20px;
+            border: 2px solid #007bff; /* Blue border for chat container */
+        }
+
+        #chat-box {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .bot-message {
+            background-color: #e9e9e9;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            text-align: left;
+            border: 1px solid #007bff; /* Blue border for bot messages */
+        }
+
+        .user-message {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            text-align: right;
+            border: 1px solid #0056b3; /* Darker blue border for user messages */
+        }
+
+        #user-input {
+            width: calc(100% - 80px); /* Adjusted for button width */
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #007bff; /* Blue border for input field */
+            margin-right: 10px;
+        }
+
+        button {
+            background-color: #007bff; /* Blue background for button */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+
+        button:active {
+            background-color: #004494; /* Even darker blue on click */
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div id="chat-box">
+            <div class="bot-message">Hello! How can I assist you today?</div>
+        </div>
+        <input type="text" id="user-input" placeholder="Type your message here...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        function sendMessage() {
+            let userInput = document.getElementById('user-input').value;
+            if (userInput) {
+                let chatBox = document.getElementById('chat-box');
+                chatBox.innerHTML += '<div class="user-message">' + userInput + '</div>';
+                document.getElementById('user-input').value = '';
+
+                fetch('/get_response', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'message=' + userInput
+                })
+                .then(response => response.json())
+                .then(data => {
+                    chatBox.innerHTML += '<div class="bot-message">' + data.response + '</div>';
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                });
+            }
+        }
+    </script>
+</body>
+</html>
